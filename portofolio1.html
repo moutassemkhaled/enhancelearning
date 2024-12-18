@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Showcase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        #portfolios {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .portfolio {
+            background: white;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(50% - 1rem);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .portfolio h2 {
+            margin: 0 0 0.5rem;
+            color: #333;
+        }
+
+        #ai-search {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #ai-search input {
+            width: calc(100% - 110px);
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        #ai-search button {
+            padding: 0.5rem;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #ai-search button:hover {
+            background-color: #555;
+        }
+
+        #search-results {
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Portfolio Showcase</h1>
+    </header>
+    <main>
+        <section id="portfolios">
+            <div class="portfolio">
+                <h2 class="portfolio-name" data-page="moutasem.html">Moutassem Khaled</h2>
+                <p>Major: Business Technology</p>
+                <p>ID: 214097</p>
+            </div>
+            <div class="portfolio">
+                <h2 class="portfolio-name" data-page="ebram.html">Ebram Nagib</h2>
+                <p>Major: Business Technology</p>
+                <p>ID: 214046</p>
+            </div>
+            <div class="portfolio">
+                <h2 class="portfolio-name" data-page="hady.html">Hady Kabil</h2>
+                <p>Major: Business Technology</p>
+                <p>ID: 214055</p>
+            </div>
+            <div class="portfolio">
+                <h2 class="portfolio-name" data-page="mohamed.html">Mohamed Moataz</h2>
+                <p>Major: Business Technology</p>
+                <p>ID: 204117</p>
+            </div>
+        </section>
+        <section id="ai-search">
+            <h2>AI Search Tool</h2>
+            <input type="text" id="search-input" placeholder="Search anything...">
+            <button id="search-btn">Search</button>
+            <div id="search-results"></div>
+        </section>
+    </main>
+
+<script>
+  const portfolioNames = document.querySelectorAll('.portfolio-name');
+  portfolioNames.forEach(nameElement => {
+        nameElement.addEventListener('click', function() {
+            const pageToNavigate = this.getAttribute('data-page');
+            if (pageToNavigate) {
+                window.location.href = pageToNavigate;
+            }
+        });
+    });
+</script>
+</body>
+    <script>
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const query = document.getElementById('search-input').value.trim();
+            
+            if (!query) {
+                document.getElementById('search-results').innerText = "Please enter a search term.";
+                return;
+            }
+
+            // Use DuckDuckGo API for fetching search results
+            const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`;
+
+fetch(apiUrl)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`); // Corrected line
+        }
+        // ... rest of your code to handle the successful response (e.g., response.json())
+    })
+    // Optional: Add a catch block to handle fetch errors
+   .catch(error => {
+        console.error("Fetch Error:", error);
+        // Handle the error, maybe display an error message on the UI
+    });
+                    return response.json();
+                })
+                .then(data => {
+                    const results = data.RelatedTopics;
+
+                    if (!results || results.length === 0) {
+                        document.getElementById('search-results').innerText = "No results found.";
+                        return;
+                    }
+
+                    // Generate HTML for search results
+                    const resultHTML = results
+                        .map(item => {
+                            // Ensure the item has necessary properties
+                            if (item.FirstURL && item.Text) {
+                                return <p><a href="${item.FirstURL}" target="_blank">${item.Text}</a></p>;
+                            }
+                            return '';
+                        })
+                        .join('');
+
+                    document.getElementById('search-results').innerHTML = resultHTML || "No valid results found.";
+                })
+                .catch(error => {
+                    console.error("Error fetching search results:", error);
+                    document.getElementById('search-results').innerText = "An error occurred. Please try again.";
+                });
+        
+    </script>
+</body>
+</html>
